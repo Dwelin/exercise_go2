@@ -4,6 +4,7 @@ package captcha
 import (
 	"gohub/pkg/app"
 	"gohub/pkg/config"
+	"gohub/pkg/redis"
 	"sync"
 
 	"github.com/mojocn/base64Captcha"
@@ -26,10 +27,22 @@ func NewCaptcha() *Captcha {
 		internalCaptcha = &Captcha{}
 
 		// 使用全局 Redis 对象，并配置存储 Key 的前缀
+		store := RedisStore{
+			RedisClient: redis.Redis,
+			KeyPrefix:   config.GetString("app.name") + ":captcha:",
+		}
 
 		// 配置 base64Captcha 驱动信息
+		driver := base64Captcha.NewDriverDigit(
+			config.GetInt("captcha.height"),      // 宽
+			config.GetInt("captcha.width"),       // 高
+			config.GetInt("captcha.length"),      // 长度
+			config.GetFloat64("captcha.maxskew"), // 数字的最大倾斜角度
+			config.GetInt("captcha.dotcount"),    // 图片背景里的混淆点数量
+		)
 
 		// 实例化 base64Captcha 并赋值给内部使用的 internalCaptcha 对象
+		internalCaptcha.Base64Captcha = base64Captcha.NewCaptcha(driver, &store)
 	})
 
 	return internalCaptcha
