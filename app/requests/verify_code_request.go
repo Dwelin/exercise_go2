@@ -1,7 +1,6 @@
 package requests
 
 import (
-	"fmt"
 	"gohub/pkg/captcha"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +43,6 @@ func VerifyCodePhone(data interface{}, c *gin.Context) map[string][]string {
 
 	// 图片验证码
 	_data := data.(*VerifyCodePhoneRequest)
-	fmt.Println(_data)
 
 	if ok := captcha.NewCaptcha().VerifyCaptcha(_data.CaptchaID, _data.CaptchaAnswer); !ok {
 		errs["captcha_answer"] = append(errs["captcha_answer"], "图片验证码错误")
