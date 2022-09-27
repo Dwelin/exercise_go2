@@ -8,15 +8,15 @@ func init() {
 		return map[string]interface{}{
 
 			// 默认是 Mailhog 的配置
-			"stmp": map[string]interface{}{
+			"smtp": map[string]interface{}{
 				"host":     config.Env("MAIL_HOST", "localhost"),
 				"port":     config.Env("MAIL_PORT", 1025),
 				"username": config.Env("MAIL_USERNAME", ""),
 				"password": config.Env("MAIL_PASSWORD", ""),
 			},
 
-			"form": map[string]interface{}{
-				"address": config.Env("MAIL_FROM_ADDRESS", "gohub@example.com"),
+			"from": map[string]interface{}{
+				"address": config.Env("MAIL_FROM_ADDRESS", "rehun@foxmail.com"),
 				"name":    config.Env("MAIL_FROM_NAME", "Gohub"),
 			},
 		}
