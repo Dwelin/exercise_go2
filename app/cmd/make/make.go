@@ -92,7 +92,7 @@ func createFileFromStub(filePath string, stuName string, model Model, variables 
 
 	// 实现最后一个参数可选
 	replaces := make(map[string]string)
-	if len(replaces) > 0 {
+	if len(variables) > 0 {
 		replaces = variables[0].(map[string]string)
 	}
 
