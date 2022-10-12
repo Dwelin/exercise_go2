@@ -4,12 +4,14 @@ package paginator
 import (
 	"fmt"
 	"gohub/pkg/config"
+	"gohub/pkg/logger"
 	"math"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 // Paging 分页数据
@@ -55,6 +57,35 @@ type Paginator struct {
 //         )
 func Paginate(c *gin.Context, db *gorm.DB, data interface{}, baseURL string, perPage int) Paging {
 
+	// 初始化 Paginator 实例
+	p := &Paginator{
+		query: db,
+		ctx:   c,
+	}
+	p.initProperties(perPage, baseURL)
+
+	// 查询数据库
+	err := p.query.Preload(clause.Associations). // 读取关联
+							Order(p.Sort + " " + p.Order). // 排序
+							Limit(p.PerPage).
+							Offset(p.Offset).
+							Find(data).
+							Error
+
+	// 数据库出错
+	if err != nil {
+		logger.LogIf(err)
+		return Paging{}
+	}
+
+	return Paging{
+		CurrentPage: p.Page,
+		PerPage:     p.PerPage,
+		TotalPage:   p.TotalPage,
+		TotalCount:  int(p.TotalCount),
+		NextPageURL: p.getNextPageURL(),
+		PrevPageURL: p.getPrevPageURL(),
+	}
 }
 
 // 初始化分页必须用到的属性，基于这些属性查询数据库
