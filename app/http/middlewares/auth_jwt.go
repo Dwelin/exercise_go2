@@ -17,6 +17,9 @@ func AuthJWT() gin.HandlerFunc {
 		// 从标头 Authorization:Bearer xxxxx 中获取信息，并验证 JWT 的准确性
 		claims, err := jwt.NewJWT().ParserToken(c)
 
+		fmt.Printf("claims: %v", claims)
+		fmt.Printf("err: %s", err)
+
 		// JWT 解析失败，有错误发生
 		if err != nil {
 			response.Unauthorized(c, fmt.Sprintf("请查看 %v 相关的接口认证文档", config.GetString("app.name")))

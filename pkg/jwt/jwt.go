@@ -160,7 +160,7 @@ func (jwt *JWT) createToken(claims JWTCustomClaims) (string, error) {
 
 // expireAtTime 过期时间
 func (jwt *JWT) expireAtTime() int64 {
-	timenow := app.TimenowInTimezone
+	timenow := app.TimenowInTimezone()
 
 	var expireTime int64
 	if config.GetBool("app.debug") {
@@ -170,12 +170,12 @@ func (jwt *JWT) expireAtTime() int64 {
 	}
 
 	expire := time.Duration(expireTime) * time.Minute
-	return timenow().Add(expire).Unix()
+	return timenow.Add(expire).Unix()
 }
 
 // parseTokenString 使用 jwtpkg.ParseWithClaims 解析 Token
 func (jwt *JWT) parseTokenString(tokenString string) (*jwtpkg.Token, error) {
-	return jwtpkg.ParseWithClaims(tokenString, &JWTCustomClaims{}, func(t *jwtpkg.Token) (interface{}, error) {
+	return jwtpkg.ParseWithClaims(tokenString, &JWTCustomClaims{}, func(token *jwtpkg.Token) (interface{}, error) {
 		return jwt.SignKey, nil
 	})
 }
@@ -190,7 +190,7 @@ func (jwt *JWT) getTokenFromHeader(c *gin.Context) (string, error) {
 	// 按空格分割
 	parts := strings.SplitN(authHeader, " ", 2)
 	if !(len(parts) == 2 && parts[0] == "Bearer") {
-		return "", ErrTokenMalformed
+		return "", ErrHeaderMalformed
 	}
 	return parts[1], nil
 }
