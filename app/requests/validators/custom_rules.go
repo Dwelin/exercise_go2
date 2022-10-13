@@ -76,7 +76,7 @@ func init() {
 	})
 
 	// min_cn:2 中文长度设定不小于 2
-	govalidator.AddCustomRule("min_cn:2", func(field, rule, message string, value interface{}) error {
+	govalidator.AddCustomRule("min_cn", func(field, rule, message string, value interface{}) error {
 		valLength := utf8.RuneCountInString(value.(string))
 		l, _ := strconv.Atoi(strings.TrimPrefix(rule, "min_cn:"))
 		if valLength < l {
